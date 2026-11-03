@@ -1,0 +1,36 @@
+\section{Análisis del comportamiento del modelo}
+En esta sección se estudia el comportamiento del modelo de El Niño y su sensibilidad a los parámetros que lo definen. El análisis se basa en una solución numérica obtenida mediante el método de Euler explícito en la sección anterior, tomando un paso temporal que garantice una solución estable y precisa. Además, se realiza una simulación del sistema durante 60 meses y se proponen como indicadores la severidad estacional de las precipitaciones y el desfase temperatura-precipitación. Los indicadores de esta sección se calculan utilizando el último ciclo anual, correspondiente al intervalo $48 \le t \le 60$ meses.
+
+\begin{itemize}
+    \item Se define la severidad estacional de las precipitaciones como:
+    \begin{equation}
+    S_P = \frac{P_{\max} - P_{\min}}{P_{\mathrm{med}}},
+    \end{equation}
+    donde $P_{\max}$, $P_{\min}$ y $P_{\mathrm{med}}$ (promedio) se calculan utilizando únicamente el último ciclo anual.
+
+    \item El desfase temperatura-precipitación se define como el tiempo transcurrido desde el máximo de $T$ hasta el máximo posterior de $P$:
+    \begin{equation}
+    \Delta t_{TP} = t_{P,\max} - t_{T,\max}
+    \end{equation}
+\end{itemize}
+
+\subsection{Indicadores resultantes con parámetros nominales}
+
+\subsection{Sensibilidad de los indicadores a los parámetros del modelo}
+
+\begin{center}
+\begin{tabular}{ll}
+\hline
+Parámetro & Intervalo de exploración \\
+\hline
+$A$ & $0.25$ a $0.60\ \text{mes}^{-1}$ \\
+$\beta$ & $0.10$ a $0.30\ \text{u.h.}\,\text{mes}^{-1}\,^\circ\text{C}^{-2}$ \\
+$\gamma$ & $0.05$ a $0.20\ \text{mes}^{-1}\,\text{u.p.}^{-1}$ \\
+$\sigma$ & $0.40$ a $1.00\ \text{mes}^{-1}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Maximización de severidad estacional}
+
+\subsection{Comparación de indicadores con parámetros nominales y modificados}

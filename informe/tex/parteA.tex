@@ -1,0 +1,23 @@
+\section{Análisis del comportamiento del método de Euler}
+En esta sección se analiza el comportamiento del método de Euler para resolver el problema de valores iniciales no lineal que modela el fenómeno de El Niño. Se estudian aspectos como la estabilidad, la convergencia y la precisión del método para distintos pasos temporales. Se busca resolver el sistema de ecuaciones diferenciales mediante el método de Euler explícito:
+\begin{equation}
+\mathbf{y}_{n+1} = \mathbf{y}_n + h\, \mathbf{f}(t_n, \mathbf{y}_n),
+\qquad \mathbf{y} = \begin{bmatrix} T \\ H \\ P \end{bmatrix},
+\end{equation}
+donde $h$ es el paso temporal.
+
+\subsection{Solución numérica con error despreciable}
+
+
+\subsection{Solución numérica con error significativo}
+
+
+
+\subsection{Orden de convergencia y relación con el paso temporal}
+
+\begin{equation}
+p = \frac{\log\!\left(\dfrac{\mathrm{Err}(2h)}{\mathrm{Err}(h)}\right)}{\log 2}
+\end{equation}
+
+
+\subsection{Análisis de estabilidad y error numérico}

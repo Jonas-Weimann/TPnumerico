@@ -1,0 +1,54 @@
+\section{Introducción}
+El fenómeno El Niño -- Oscilación del Sur constituye un ejemplo de sistema dinámico acoplado en el que una perturbación térmica del océano puede producir respuestas posteriores en la humedad atmosférica y en la precipitación. En este trabajo práctico se utilizará un modelo temporal simplificado de tres variables para estudiar, por un lado, propiedades numéricas del método de Euler aplicado a un problema de valores iniciales y, por otro, la respuesta del modelo frente a cambios en sus parámetros.
+
+El objetivo es reproducir de manera aproximada un evento climático real, utilizando un sistema de ecuaciones diferenciales ordinarias no lineales con excitación estacional como caso de estudio para analizar convergencia, orden, estabilidad y sensibilidad paramétrica.
+
+\section{Ecuaciones intervinientes}
+Se considera el siguiente sistema de ecuaciones diferenciales ordinarias:
+\begin{align}
+\frac{dT}{dt} &= R(t)\,T\left(1-\frac{T}{T_{\max}}\right) - \alpha H \\
+\frac{dH}{dt} &= \beta T^{2} - \gamma H P \\
+\frac{dP}{dt} &= \delta H^{2} - \sigma P
+\end{align}
+
+Las variables del modelo son:
+\begin{itemize}
+    \item $T(t)$: anomalía de temperatura superficial del mar [$^\circ$C].
+    \item $H(t)$: anomalía de humedad en la atmósfera baja [u.h.].
+    \item $P(t)$: variable simplificada asociada a precipitación/nubosidad [u.p.].
+\end{itemize}
+
+La tasa de crecimiento térmico está modulada por una excitación estacional de período anual:
+\begin{equation}
+R(t) = R_{\mathrm{oce}} + A\cos(\omega t - \pi), \qquad \omega = \frac{2\pi}{12}
+\end{equation}
+
+Parámetros nominales:
+
+\begin{center}
+\begin{tabular}{llc}
+\hline
+Parámetro & Significado físico & Valor nominal \\
+\hline
+$T_{\max}$ & Anomalía máxima térmicamente sostenible & $4.0\ ^\circ$C \\
+$R_{\mathrm{oce}}$ & Tasa intrínseca de calentamiento oceánico & $0.30\ \text{mes}^{-1}$ \\
+$\alpha$ & Coeficiente de enfriamiento por evaporación & $0.05\ ^\circ\text{C}\,\text{mes}^{-1}\,\text{u.h.}^{-1}$ \\
+$\beta$ & Eficiencia de evaporación & $0.20\ \text{u.h.}\,\text{mes}^{-1}\,^\circ\text{C}^{-2}$ \\
+$\gamma$ & Tasa de consumo de humedad por precipitación & $0.10\ \text{mes}^{-1}\,\text{u.p.}^{-1}$ \\
+$\delta$ & Eficiencia de conversión de humedad a lluvia & $0.40\ \text{u.p.}\,\text{mes}^{-1}\,\text{u.h.}^{-2}$ \\
+$\sigma$ & Tasa de descarga/disipación sobre el continente & $0.70\ \text{mes}^{-1}$ \\
+$A$ & Amplitud de la modulación estacional & $0.45\ \text{mes}^{-1}$ \\
+$\omega$ & Frecuencia angular para un ciclo anual & $2\pi/12\ \text{rad/mes}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+Condiciones iniciales:
+\begin{equation}
+T(0) = 1.0\ ^\circ\text{C}, \qquad H(0) = 0\ \text{u.h.}, \qquad P(0) = 0\ \text{u.p.}
+\end{equation}
+
+Intervalo de integración:
+\begin{equation}
+0 \le t \le 60\ \text{meses}
+\end{equation}
