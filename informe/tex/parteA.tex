@@ -191,8 +191,116 @@ Resuelver nuevamente el problema utilizando una sucesión de pasos h tales que c
 aproximadamente el doble del anterior. Debemos comparar con la solucion de referencia y cuantificar el error usando el máximo error absoluto sobre todo el intervalo de la variable 
 T(t). 
 
-Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser similares y con margenes de errores pequeños a partir de $h = 0.005$. Por lo cual este sera nuestro punto de inicio donde duplicamos el valor de h para observar el comportamiento de los valores y se nos pide usando el maximo error absoluto sobre el intervalo de la variable $T(t)$:
+Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser similares y con margenes de errores pequeños a partir de $h = 0.001$. Por lo cual este sera nuestro punto de inicio donde duplicamos el valor de h para observar el comportamiento de los valores y se nos pide usando el maximo error absoluto sobre el intervalo de la variable $T(t)$:
 
 $Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
 
-Esto funciona si los pasos elegidos siempre son multiplos de $h_{ref}$. De la misma manera, evaluamos cuando es una sucesion $t = 10,20..60$ para evaluar en puntos especificos debido a que pasos mas chicos contienen mas iteraciones que pasos mas grandes.
+Buscamos saber como es la diferencia de error entre $h_{ref}$ y los multiplos en aumento de $h = 0.001$. Aunque es tentador mostrar como se alteran los valores segun cada h en comparacion con $h_{ref}$, se va a crear una tabla mostrando como cambia el maximo error absoluto dependiendo del h. Para la comparacion se decidio evaluar los valores de T(t) cuando coinciden en el mismo valor t (tiempo) por cada h.
+
+Se implementa el siguiente algoritmo para evaluar el error absoluto de la diferencia entre mismos puntos donde coincide t para cada h distinto respecto a ${h_ref}$
+
+\begin{lstlisting}[language=Python]
+
+import math
+
+def ejecutar_euler_explicito(h: float):
+    "Calcula los puntos T(t), H(t), P(t) dado un valor h. Devuelve 3 listas para cada funcion con los puntos adquiridos."
+    t_max, roce, alpha, beta = 4.0, 0.3, 0.05 , 0.20
+    gamma, delta, sigma, a_mayus = 0.1, 0.4, 0.7, 0.45
+    omega = 2 * math.pi / 12
+
+    t_inicial, h_incial, p_inicial = 1.0, 0.0, 0.0
+
+    iteraciones = round(60 / h)
+
+    temperaturas = [t_inicial]
+    humedades = [h_incial]
+    precipitaciones = [p_inicial]
+
+    for i in range(1, iteraciones + 1):
+
+        t = (i -1) * h #Tiempo: va desde el intervalo 0 hasta 60
+
+        r = roce + a_mayus * math.cos(omega * t - math.pi)
+        #Necesario calcular las 3 a la vez porque una depende de la otra
+        t_nuevo = t_inicial + h * (r * t_inicial * (1 - t_inicial/t_max) - alpha * h_incial)
+        h_nuevo = h_incial + h * (beta * (t_inicial ** 2) - gamma * p_inicial * h_incial)
+        p_nuevo = p_inicial + h * (delta * (h_incial ** 2) - sigma * p_inicial)
+
+        t_inicial, h_incial, p_inicial  = t_nuevo, h_nuevo, p_nuevo
+
+        temperaturas.append(t_inicial)
+        humedades.append(h_incial)
+        precipitaciones.append(p_inicial)
+
+    return (temperaturas, humedades, precipitaciones)
+
+def calcular_maximo_error_absoluto_T(temp_h: list, temp_ref: list, h: float, h_ref: float) -> float:
+    """
+    Calcula la maxima diferencia absoluta entre temp_h y temp_ref 
+    en los puntos donde coinciden en el mismo instante t.
+    """
+    salto = round(h / h_ref)
+    max_error = 0.0
+
+    for i, val in enumerate(temp_h):
+        idx_ref = i * salto
+        
+        # Verificacion para no exceder la longitud de la referencia
+        if idx_ref < len(temp_ref):
+            diff = abs(val - temp_ref[idx_ref])
+            if diff > max_error:
+                max_error = diff
+
+    return max_error
+
+def main():
+    h_ref = 0.00005
+    print(f"Calculando solucion de referencia con h_ref = {h_ref}...")
+    temp_ref, hum_ref, prep_ref = ejecutar_euler_explicito(h_ref)
+
+    #2. Sucesion de pasos h (duplicando a partir de 0.001)
+    pasos_h = [0.001 * (2**k) for k in range(11)]
+
+    print(f"{'h [meses]':<12} | {'Iteraciones':<12} | {'Salto':<8} | {'Max Error Absoluto T [Celsius]':<25}")
+    print("-" * 65)
+
+    #4. Evaluacion de cada paso h
+    for h in pasos_h:
+        temp_h, hum_h, prep_h = ejecutar_euler_explicito(h)
+        salto = round(h / h_ref)
+        
+        err_max_T = calcular_maximo_error_absoluto_T(temp_h, temp_ref, h, h_ref)
+        
+        n_iteraciones = len(temp_h) - 1
+        print(f"{h:<12.5f} | {n_iteraciones:<12d} | {salto:<8d} | {err_max_T:<25.6e}")
+
+if __name__ == "__main__":
+    main()
+    
+\end{lstlisting}
+
+Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto cuando aumenta h comparado con $h_{ref}$
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados del análisis según el tamaño de paso.}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        $h$ [meses] & Iteraciones & Salto & Max Error Absoluto $T$ [$^\circ$C] \\ \hline
+        0.00100 & 60000 & 20    & $4.333410e^{-4}$ \\ \hline
+        0.00200 & 30000 & 40    & $8.896033e^{-4}$ \\ \hline
+        0.00400 & 15000 & 80    & $1.802479e^{-3}$ \\ \hline
+        0.00800 & 7500  & 160   & $3.629626e^{-3}$ \\ \hline
+        0.01600 & 3750  & 320   & $7.289446e^{-3}$ \\ \hline
+        0.03200 & 1875  & 640   & $1.463162e^{-2}$ \\ \hline
+        0.06400 & 938   & 1280  & $2.940252e^{-2}$ \\ \hline
+        0.12800 & 469   & 2560  & $5.925934e^{-2}$ \\ \hline
+        0.25600 & 234   & 5120  & $1.204173e^{-1}$ \\ \hline
+        0.51200 & 117   & 10240 & $2.461868e^{-1}$ \\ \hline
+        1.02400 & 59    & 20480 & $4.959179e^{-1}$ \\ \hline
+        1.28 & 47 & 25600 & $6.036607e^{19}$ \\ \hline
+\end{tabular}
+\end{table}
+
+El comportamiento inestable empieza a rondar alrededor de 1.28 en adelante y mayor a 1.28 muestra valores de error maximo absoluto tendiendo a infinito (El algoritmo no permite calcular para h mayores $h > 1.28$ debido a que presenta valores tan grandes que genera un error debido a que usa todos los bits de la computadora y aun asi no es suficiente)
