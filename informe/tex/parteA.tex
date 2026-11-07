@@ -64,7 +64,7 @@ def ejecutar_euler_explicito(h: float):
 
     for i in range(1, iteraciones + 1):
 
-        t = i * h #Tiempo: va desde el intervalo 0 hasta 60
+        t = (i - 1) * h #Tiempo: va desde el intervalo 0 hasta 60
 
         r = roce + a_mayus * math.cos(omega * t - math.pi)
         #Necesario calcular las 3 a la vez porque una depende de la otra
@@ -103,21 +103,21 @@ La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) c
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
-        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        h/t & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
         \hline
-        t = 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+        t = 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
         \hline
-        t = 10 & 3.15307 & 3.21427 & 3.21338 & 3.21332 & 3.21327 & 3.21326 & 3.21326 & 3.21326\\
+        t = 10 & 3.22135 & 3.21409 & 3.21368 & 3.21334 & 3.21330 & 3.21327 & 3.21326\\
         \hline
-        t = 20 & 3.55568 & 3.57835 & 3.57135 & 3.57095 & 3.57063 & 3.57058 & 3.57055 & 3.57055\\
+        t = 20 & 3.57619 & 3.57111 & 3.57082 & 3.57060 & 3.57057 & 3.57055 & 3.57055\\
         \hline
-        t = 30 & 3.59751 & 3.43087 & 3.41285 & 3.41185 & 3.41105 & 3.41094 & 3.41086 & 3.41086\\
+        t = 30 & 3.41084 & 3.41084 & 3.41084 & 3.41084 & 3.41084 & 3.41084 & 3.41084\\
         \hline
-        t = 40 & 3.16116 & 2.88824 & 2.87108 & 2.87014 & 2.86938 & 2.86929 & 2.86921 & 2.86920\\ 
+        t = 40 & 2.86005 & 2.86829 & 2.86874 & 2.86910 & 2.86915 & 2.86919 & 2.86919\\ 
         \hline
-        t = 50 & 2.69380 & 2.62980 & 2.63022 & 2.63025 & 2.63028 & 2.63028 & 2.63028 & 2.63028\\
+        t = 50 & 2.63711 & 2.63095 & 2.63061 & 2.63035 & 2.63031 & 2.63029 & 2.63029\\
         \hline
-        t = 60 & 2.98263 & 3.03088 & 3.04032 & 3.04084 & 3.04126 & 3.04132 & 3.04136 & 3.04136\\
+        t = 60 & 3.05756 & 3.04299 & 3.04218 & 3.04153 & 3.04145 & 3.04138 & 3.04137\\
         \hline
     \end{tabular}
     \caption{Como varia T(t) conforme cambia h por sucesion t = 10}
@@ -131,21 +131,21 @@ Lo mismo para H(t) y para P(t)
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
-        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        h/t & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
         \hline
-        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
         \hline
-        t = 10 & 1.24655 & 3.38183 & 3.41658 & 3.41825 & 3.41956 & 3.41973 & 3.41986 & 3.41987\\
+        t = 10 & 3.41419 & 3.41951 & 3.41971 & 3.41985 & 3.41987 & 3.41989 & 3.41989\\
         \hline
-        t = 20 & 3.19001 & 3.66998 & 3.67104 & 3.67101 & 3.67097 & 3.67097 & 3.67097 & 3.67097\\
+        t = 20 & 3.67897 & 3.67175 & 3.67136 & 3.67105 & 3.67101 & 3.67097 & 3.67097\\
         \hline
-        t = 30 & 4.97529 & 3.57948 & 3.54859 & 3.54693 & 3.54560 & 3.54544 & 3.54531 & 3.54530 \\
+        t = 30 & 3.55513 & 3.54621 & 3.54574 & 3.54537 & 3.54532 & 3.54528 & 3.54528 \\
         \hline
-        t = 40 & 4.06908 & 2.95144 & 2.94108 & 2.94052 & 2.94006 & 2.94001 & 2.93996 & 2.93996\\
+        t = 40 & 2.92583 & 2.93858 & 2.93926 & 2.93981 & 2.93988 & 2.93994 & 2.93994\\
         \hline
-        t = 50 & 3.40972 & 2.79856 & 2.80521 & 2.80557 & 2.80586 & 2.80589 & 2.80592 & 2.80593 \\
+        t = 50 & 2.80897 & 2.80623 & 2.80608 & 2.80596 & 2.80595 & 2.80593 & 2.80593 \\
         \hline
-        t = 60 & 4.05221 & 3.15596 & 3.16337 & 3.16381 & 3.16415 & 3.16419 & 3.16423 & 3.16423\\
+        t = 60 & 3.17617 & 3.16539 & 3.16481 & 3.16435 & 3.16429 & 3.16425 & 3.16424\\
         \hline
     \end{tabular}
     \caption{Como varia H(t) conforme cambia h por sucesion t = 10}
@@ -156,21 +156,21 @@ Lo mismo para H(t) y para P(t)
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
-        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        h/t  & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
         \hline
-        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
         \hline
-        t = 10 & 10.912 & 6.95402 & 6.85266 & 6.84701 & 6.84249 & 6.84193 & 6.84148 & 6.84143\\
+        t = 10 & 6.96530 & 6.85257 & 6.84694 & 6.84247 & 6.84192 & 6.84147 & 6.84142\\
         \hline
-        t = 20 & 13.331 & 7.23126 & 7.14206 & 7.13722 & 7.13336 & 7.13288 & 7.13249 & 7.13246\\
+        t = 20 & 7.19087 & 7.13783 & 7.13510 & 7.13294 & 7.13267 & 7.13245 & 7.13244\\
         \hline
-        t = 30 & 9.22262 & 5.95791 & 5.90264 & 5.89969 & 5.89735 & 5.89705 & 5.89682 & 5.89680 \\
+        t = 30 & 5.86199 & 5.89352 & 5.89514 & 5.89644 & 5.89660 & 5.89673 & 5.89674 \\
         \hline
-        t = 40 & 4.63271 & 4.72916 & 4.74904 & 4.75009 & 4.75093 & 4.75103 & 4.75112 & 4.75113\\
+        t = 40 & 4.71686 & 4.74773 & 4.74944 & 4.75081 & 4.75097 & 4.75111 & 4.75112\\
         \hline
-        t = 50 & 4.20419 & 5.26533 & 5.28986 & 5.29121 & 5.29229 & 5.29243 & 5.29254 & 5.29255 \\
+        t = 50 & 5.32227 & 5.29543 & 5.29399 & 5.29285 & 5.29271 & 5.29259 & 5.29258 \\
         \hline
-        t = 60 & 5.66466 & 6.46994 & 6.48393 & 6.48472 & 6.48536 & 6.48545 & 6.48551 & 6.48552\\
+        t = 60 & 6.52303 & 6.48927 & 6.48740 & 6.48590 & 6.48571 & 6.48557 & 6.48555\\
         \hline
     \end{tabular}
     \caption{Como varia P(t) conforme cambia h por sucesion t = 10}
@@ -184,3 +184,15 @@ Se propone que $h_{ref}$ sea igual a 0.00005 ya que la diferencia entre el anter
 (Asumir que tambien se puede agregar gráficos)
 
 \subsection{Parte B}
+
+En este inciso b, se pide:
+
+Resuelver nuevamente el problema utilizando una sucesión de pasos h tales que cada valor sea 
+aproximadamente el doble del anterior. Debemos comparar con la solucion de referencia y cuantificar el error usando el máximo error absoluto sobre todo el intervalo de la variable 
+T(t). 
+
+Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser similares y con margenes de errores pequeños a partir de $h = 0.005$. Por lo cual este sera nuestro punto de inicio donde duplicamos el valor de h para observar el comportamiento de los valores y se nos pide usando el maximo error absoluto sobre el intervalo de la variable $T(t)$:
+
+$Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
+
+Esto funciona si los pasos elegidos siempre son multiplos de $h_{ref}$. De la misma manera, evaluamos cuando es una sucesion $t = 10,20..60$ para evaluar en puntos especificos debido a que pasos mas chicos contienen mas iteraciones que pasos mas grandes.
