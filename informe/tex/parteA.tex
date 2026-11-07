@@ -1,23 +1,186 @@
-\section{Análisis del comportamiento del método de Euler}
-En esta sección se analiza el comportamiento del método de Euler para resolver el problema de valores iniciales no lineal que modela el fenómeno de El Niño. Se estudian aspectos como la estabilidad, la convergencia y la precisión del método para distintos pasos temporales. Se busca resolver el sistema de ecuaciones diferenciales mediante el método de Euler explícito:
-\begin{equation}
-\mathbf{y}_{n+1} = \mathbf{y}_n + h\, \mathbf{f}(t_n, \mathbf{y}_n),
-\qquad \mathbf{y} = \begin{bmatrix} T \\ H \\ P \end{bmatrix},
-\end{equation}
-donde $h$ es el paso temporal.
+\section{Parte 1: Convergencia, orden y estabilidad del método de Euler}
 
-\subsection{Solución numérica con error despreciable}
+Se pide resolver lo pedido en la introduccion a traves del metodo de Euler explicito. Para eso, primero analizamos las ecuaciones diferenciales. Observando en detalle podemos apreciar:
+
+\begin{itemize}
+    \item Las 3 ecuaciones son problemas de valores iniciales de primer orden. Las condiciones iniciales nos brinda una pista y podemos saber que no hay una derivada segunda presente en alguna de las ecuaciones
+    
+    \item Dos de las ecuaciones son no lineales y el resto es lineal. Se observa que las no lineales tienen el exponente mayor a 1. Aun asi, debido a que aplicamos Euler explicito, no es un problema que sea no lineal. A diferencia de Euler implicito donde debemos resolver ecuaciones no lineales por iteracion (especificamente para las dos ecuaciones diferenciales no lineales).
+    
+    \item Todas las ecuaciones dependen de otra.
+
+    \item La unica preocupacion es encontrar $h_{max}$ tal que al aplicar el metodo de Euler explicito no presente inestabilidad
+\end{itemize}
+
+Para resolver por el metodo de Euler explicito se debe seguir aplicar la siguiente formula:
+
+$y_{n+1} = y_{n} + hf(t_{n}, y_{n})$ \\
+
+Aplicandolo a las ecuaciones diferenciales discretizamos: \\
 
 
-\subsection{Solución numérica con error significativo}
+$T_{n+1} = T_{n} + h[R(t_{n})T_{n}(1- \frac{T_{n}}{T_{max}}) - \alpha H_{n}]$
+
+$H_{n+1} = H_{n} + h[\beta T_{n}^{2} - \gamma H_{n}P_{n}]$
+
+$P_{n+1} = P_{n} + h[\delta H_{n}^{2} - \sigma P_{n}]$ \\
+
+Donde $T_{n}$ representa a la primera ecuacion diferencial en la sección de introduccion, $H_{n}$ a la segunda ecuacion y $P_{n}$ a la ultima ecuacion diferencial.
+
+Partimos de los valores iniciales para ejecutar el método de Euler explicito para las 3 ecuaciones diferenciales PVI:
+
+$T_{0} = 1.0 ^\circ C$
+
+$H_{0} = 0 \cdot u.h.$
+
+$P_{0} = 0 \cdot u.p.$
+
+\subsection{Punto A}
+
+Nos pide obtener una solucion "de referencia" usando el metodo de Euler explicito, pero con un $h_{ref}$ lo suficientemente pequeño.
+
+El problema radica que valores de h son lo suficientemente pequeños.
+
+Asumimos comparaciones. El h va a ser unico y es para las 3 ecuaciones diferenciales.
+
+Partimos de $h = 1 mes$. Y lo vamos reduciendo a la mitad tal que la diferencia entre los resultados sea despreciable y asi conseguimos un $h_{ref}$. Para eso usaremos el siguiente algoritmo para ejecutar el metodo de Euler explicito con las ecuaciones diferenciales:
+
+\begin{lstlisting}[language=Python]
+
+import math
+
+def ejecutar_euler_explicito(h: float):
+    t_max, roce, alpha, beta = 4.0, 0.3, 0.05 , 0.20
+    gamma, delta, sigma, a_mayus = 0.1, 0.4, 0.7, 0.45
+    omega = 2 * math.pi / 12
+
+    t_inicial, h_incial, p_inicial = 1.0, 0.0, 0.0
+
+    iteraciones = round(60 / h)
+
+    temperaturas = [t_inicial]
+    humedades = [h_incial]
+    precipitaciones = [p_inicial]
+
+    for i in range(1, iteraciones + 1):
+
+        t = i * h #Tiempo: va desde el intervalo 0 hasta 60
+
+        r = roce + a_mayus * math.cos(omega * t - math.pi)
+        #Necesario calcular las 3 a la vez porque una depende de la otra
+        t_nuevo = t_inicial + h * (r * t_inicial * (1 - t_inicial/t_max) - alpha * h_incial)
+        h_nuevo = h_incial + h * (beta * (t_inicial ** 2) - gamma * p_inicial)
+        p_nuevo = p_inicial + h * (delta * (h_incial ** 2) - sigma * p_inicial)
+
+        t_inicial, p_inicial, h_incial = t_nuevo, p_nuevo, h_nuevo
+
+        temperaturas.append(t_inicial)
+        humedades.append(h_incial)
+        precipitaciones.append(p_inicial)
+
+    return (temperaturas, humedades, precipitaciones)
 
 
 
-\subsection{Orden de convergencia y relación con el paso temporal}
+def main():
+    h = 0.25
+    temp, hum, prep = ejecutar_euler_explicito(h)
+    print(f"h = {h}")
+    #Muchos puntos, averiguamos por cada 10 puntos
+    for t in range(0, 61, 10):
+        i = round(t / h)
+        print(f"Temperatura en el tiempo {t}: {temp[i]}")
+        print(f"Humedad en el tiempo {t}: {hum[i]}")
+        print(f"Precipitaciones en el tiempo {t}: {prep[i]}")
+    
+\end{lstlisting}
 
-\begin{equation}
-p = \frac{\log\!\left(\dfrac{\mathrm{Err}(2h)}{\mathrm{Err}(h)}\right)}{\log 2}
-\end{equation}
+Con el algoritmo implementado, evaluamos los puntos cuando $t = 0, 10, 20, 30... 60$ y comparamos resultados cuando h se divide a la mitad y encontraremos el $h_{ref}$
+
+La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) cuando h varia y por cada t = 10. Tambien redondeamos en 5 digitos decimales.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline
+        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        \hline
+        t = 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+        \hline
+        t = 10 & 2.95105 & 2.96717 & 2.99073 & 2.99094 & 2.99111 & 2.99113 & 2.99115 & 2.99115\\
+        \hline
+        t = 20 & 3.47188 & 3.35946 & 3.28247 & 3.28171 & 3.28111 & 3.28103 & 3.28097 & 3.28097\\
+        \hline
+        t = 30 & 3.40426 & 3.09495 & 2.91396 & 2.91232 & 2.91101 & 2.91084 & 2.91071 & 2.91071\\
+        \hline
+        t = 40 & 2.39001 & 2.12566 & 2.01191 & 2.01098 & 2.01023 & 2.01014 & 2.01007 & 2.01007\\ 
+        \hline
+        t = 50 & 1.70818 & 1.68551 & 1.72548 & 1.72598 & 1.72639 & 1.72644 & 1.72648 & 1.72648\\
+        \hline
+        t = 60 & 1.96636 & 2.15339 & 2.29049 & 2.29176 & 2.29278 & 2.29291 & 2.29301 & 2.29301\\
+        \hline
+    \end{tabular}
+    \caption{Como varia T(t) conforme cambia h por sucesion t = 10}
+    \label{tab:parametros}
+\end{table}
 
 
-\subsection{Análisis de estabilidad y error numérico}
+Lo mismo para H(t) y para P(t)
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        \hline
+        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        \hline
+        t = 10 & 8.11394 & 6.52992 & 6.43031 & 6.42496 & 6.42069 & 6.42015 & 6.41971 & 6.41970\\
+        \hline
+        t = 20 & 7.72286 & 6.10221 & 6.01076 & 6.00592 & 6.00205 & 6.00157 & 6.00119 & 6.00115\\
+        \hline
+        t = 30 & 4.43070 & 4.10192 & 4.09285 & 4.09241 & 4.09205 & 4.09201 & 4.09197 & 4.09197 \\
+        \hline
+        t = 40 & 2.06657 & 2.88924 & 2.94441 & 2.94739 & 2.94977 & 2.95007 & 2.95031 & 2.95033\\
+        \hline
+        t = 50 & 1.43148 & 3.38717 & 3.47486 & 3.47947 & 3.48316 & 3.48361 & 3.48398 & 3.48402 \\
+        \hline
+        t = 60 & 3.07514 & 5.01351 & 5.06911 & 5.07192 & 5.07415 & 5.07443 & 5.07465 & 5.07467\\
+        \hline
+    \end{tabular}
+    \caption{Como varia H(t) conforme cambia h por sucesion t = 10}
+    \label{tab:parametros}
+\end{table}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+        \hline
+        h/t & h=1 & h=0.1 & h=0.01 & h=0.005 & h=0.001 & h=0.0005 & h=0.0001 & h=0.00005\\
+        \hline
+        t = 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        \hline
+        t = 10 & 27.26272 & 18.10662 & 17.49023 & 17.45732 & 17.43109 & 17.42783 & 17.42521 & 17.42488\\
+        \hline
+        t = 20 & 15.46729 & 13.81425 & 13.66640 & 13.65863 & 13.65244 & 13.65167 & 13.65106 & 13.65100\\
+        \hline
+        t = 30 & 3.66969 & 6.80216 & 7.01474 & 7.02625 & 7.03544 & 7.03658 & 7.03750 & 7.03760 \\
+        \hline
+        t = 40 & 1.47511 & 6.59748 & 6.89903 & 6.91506 & 6.92783 & 6.92942 & 6.93069 & 6.93085\\
+        \hline
+        t = 50 & 4.20419 & 11.64671 & 11.89552 & 11.90812 & 11.91813 & 11.91937 & 11.92037 & 11.92049 \\
+        \hline
+        t = 60 & 20.11058 & 19.60680 & 19.41610 & 19.40552 & 19.39706 & 19.39601 & 19.39516 & 19.39505\\
+        \hline
+    \end{tabular}
+    \caption{Como varia P(t) conforme cambia h por sucesion t = 10}
+    \label{tab:parametros}
+\end{table}
+
+Al observar los resultados podemos apreciar que en las últimas columnas de h, el resultado varía de manera casi imperceptible. Podemos asumir que esto se puede despreciar y tendríamos casi 5 digitos significativos.
+
+Se propone que $h_{ref}$ sea igual a 0.00005 ya que la diferencia entre el anterior h y este es tan pequeño que se puede despreciar.
+
+(Asumir que tambien se puede agregar gráficos)
+
+\subsection{Parte B}
