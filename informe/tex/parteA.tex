@@ -316,4 +316,47 @@ Observando en el grafico podemos comprobar con algunos h altos (h parecidos a $h
 
 \subsection{Punto C}
 
-Para este caso
+Para este caso vamos a confirmar que efectivamente el orden de precision del metodo de Euler explicito es de orden 1 (como esta comprobado teoricamente). Se nos brinda la siguiente formula para confirmar el orden:
+
+$p = \frac{log(\frac{Err(2h)}{Err(h)})}{log(2)}$
+
+donde $Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
+
+Como ya tenemos todos los hs a mano y calculamos los puntos, podemos usar el orden p para verificar correctamente que el $Err(h)$ escala linealmente. Para lograr esto, tomamos los valores de h en la parte B y aplicamos la formula
+
+\begin{table}[htbp]
+  \centering
+  \caption{Resultados de error y orden observado $p$ en función del paso $h$.}
+  \label{tab:convergencia}
+  \vspace{0.5em}
+  \begin{tabular}{|c|c|c|c|}
+    \toprule
+    \textbf{$h$ [meses]} & \textbf{$\text{Err}(h)$ [$^\circ\text{C}$]} & \textbf{Orden Observado $p$} \\
+    \midrule
+    0.0010 & $4.333410 \times 10^{-4}$ & -- \\
+    0.0020  & $8.896033 \times 10^{-4}$ & 1.0377 \\
+    0.0040  & $1.802479 \times 10^{-3}$ & 1.0187 \\
+    0.0080  & $3.629626 \times 10^{-3}$ & 1.0098 \\
+    0.0160  & $7.289446 \times 10^{-3}$ & 1.0060 \\
+    0.0320  & $1.463162 \times 10^{-2}$ & 1.0052 \\
+    0.0640  & $2.940252 \times 10^{-2}$ & 1.0069 \\
+    0.1280  & $5.925934 \times 10^{-2}$ & 1.0111 \\
+    0.2560 & $1.204173 \times 10^{-1}$ & 1.0229 \\
+    0.5120  & $2.461868 \times 10^{-1}$ & 1.0317 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.5em}
+\end{table}
+
+Se puede apreciar que orden p es aproximadamente 1, sugiriendo que el orden del metodo de Euler explicito es lineal y confirmando empíricamente la teoría. Se aplica la formula sugerida donde 2h es el que corresponde en la fila y h el resultado anterior.
+
+Para completar el analisis se muestra el siguiente grafico en escala logaritmica para evidenciar que efectivamente el orden p es aproximadamente 1:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{grafico2.png}
+\end{figure}
+
+Observando el grafico, podemos apreciar que la pendiente es lineal comenzando desde 0.001 ($10^{-3}$) hasta llegar 0.1 o mas ($10^{-1}$) concluyendo que efectivamente que a medida que el paso h aumenta, el error absoluto aumenta de forma lineal.
+
+\subsection{Parte D}
