@@ -304,3 +304,16 @@ Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto 
 \end{table}
 
 El comportamiento inestable empieza a rondar alrededor de 1.28 en adelante y mayor a 1.28 muestra valores de error maximo absoluto tendiendo a infinito (El algoritmo no permite calcular para h mayores $h > 1.28$ debido a que presenta valores tan grandes que genera un error debido a que usa todos los bits de la computadora y aun asi no es suficiente)
+
+Para finalizar el analisis, agregaremos dos graficos, T(t) vs t cuanado h crece y $Err_{abs} = |T_{n}^{h} - T_{n}^{h_{ref}}|$ vs t.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{grafico1.png}
+\end{figure}
+
+Observando en el grafico podemos comprobar con algunos h altos (h parecidos a $h_{ref}$ son casi imperceptibles a ojo humano, por lo cual se usaron valores de h altos para distinguir que tan diferentes son de obtener los resultados con $h_{ref}$) como en el panel superior, la curva de $h = 1.024$ (roja) muestra un claro desfasaje y una sobreestimación de los picos respecto a la referencia negra. En el panel inferior expone cómo el error no es constante, sino que oscila y crece a medida que se acumulan pasos de integración.
+
+\subsection{Punto C}
+
+Para este caso
