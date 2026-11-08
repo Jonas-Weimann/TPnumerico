@@ -121,7 +121,6 @@ La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) c
         \hline
     \end{tabular}
     \caption{Como varia T(t) conforme cambia h por sucesion t = 10}
-    \label{tab:parametros}
 \end{table}
 
 
@@ -149,7 +148,6 @@ Lo mismo para H(t) y para P(t)
         \hline
     \end{tabular}
     \caption{Como varia H(t) conforme cambia h por sucesion t = 10}
-    \label{tab:parametros}
 \end{table}
 
 \begin{table}[h]
@@ -174,7 +172,6 @@ Lo mismo para H(t) y para P(t)
         \hline
     \end{tabular}
     \caption{Como varia P(t) conforme cambia h por sucesion t = 10}
-    \label{tab:parametros}
 \end{table}
 
 Al observar los resultados podemos apreciar que en las últimas columnas de h, el resultado varía de manera casi imperceptible. Podemos asumir que esto se puede despreciar y tendríamos casi 5 digitos significativos.
@@ -261,6 +258,7 @@ def main():
 
     #2. Sucesion de pasos h (duplicando a partir de 0.001)
     pasos_h = [0.001 * (2**k) for k in range(11)]
+    pasos_h.append(1.28)
 
     print(f"{'h [meses]':<12} | {'Iteraciones':<12} | {'Salto':<8} | {'Max Error Absoluto T [Celsius]':<25}")
     print("-" * 65)
@@ -299,7 +297,6 @@ Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto 
         0.25600 & 234   & 5120  & $1.204173e^{-1}$ \\ \hline
         0.51200 & 117   & 10240 & $2.461868e^{-1}$ \\ \hline
         1.02400 & 59    & 20480 & $4.959179e^{-1}$ \\ \hline
-        1.28 & 47 & 25600 & $6.036607e^{19}$ \\ \hline
 \end{tabular}
 \end{table}
 
@@ -360,3 +357,26 @@ Para completar el analisis se muestra el siguiente grafico en escala logaritmica
 Observando el grafico, podemos apreciar que la pendiente es lineal comenzando desde 0.001 ($10^{-3}$) hasta llegar 0.1 o mas ($10^{-1}$) concluyendo que efectivamente que a medida que el paso h aumenta, el error absoluto aumenta de forma lineal.
 
 \subsection{Parte D}
+
+En esta seccion vamos a seguir aumentando el paso temporal h, y averiguaremos cuando el error deja de aumentar en forma lineal y aumenta abruptamente. A partir del paso 1.024 se empiezan a hacer aumentos pequeños, generalemente de 0.05 en 0.05 comenzando desde h = $1.05$ para respetar que sea multiplo $h_{ref}$
+
+En la siguiente tabla se muestra la siguiente informacion aplicando el algoritmo de la parte B:
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados del análisis según el tamaño de paso.}
+    \begin{tabular}{|c|c|c|c|}
+        \hline 
+        $h$ [meses] & Iteraciones & Salto & Max Error Absoluto $T$ [$^\circ$C] \\ \hline
+        1 & 60 & 20000    & $4.945995e^{-1}$ \\ \hline
+        1.05 & 57 & 21000     & $4.936988e^{-1} $ \\ \hline
+        1.1 & 55 & 22000    & $5.424548e^{-1} $ \\ \hline
+        1.15 & 52  & 23000   & $5.813068e^{-1} $ \\ \hline
+        1.2 & 50  & 24000   & $6.065554e^{-1}$ \\ \hline
+        1.25 & 48  & 25000   & $6.152754e^{-1} $ \\ \hline
+        1.28 & 47 & 25600 & $6.036607e^{19}$ \\ \hline
+        1.3 & --   & 2560  & $\infty$ \\ \hline
+\end{tabular}
+\end{table}
+
+Con los valores mostrados, podemos intuir que a partir de $h = 1$ comienza a tener comportamientos mas inestables hasta alcanzar 1.25, donde la computadora comienza a devolver el error OverflowError: (34, 'Numerical result out of range'). Esto indica que el valor maximo del error es tan grande que no puede calcularse, incluso con 64 bits. Esto se aprecia mas en 1.28, valor donde se encontro mostrando un resultado completamente inestable mostrando un error absoluto catastroficamente grande y sin sentido comparado con $h_{ref}$ en el punto A. Podemos decir que la inestabilidad de h se encuentra entre 1.22 en adelante mostrando resultados completamente inestables. El error absoluto crece exponencialmente para valores $h > 1.22$.
