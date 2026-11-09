@@ -112,7 +112,7 @@ Modelo simplificado del fenómeno de El Niño
 
     \begin{tabular}{c c c}
         \large Pared Cristian & \large Pugliese Tomás & \large Weimann Jonás \\
-        \large (padrón)    & \large (110140)        & \large 113584
+        \large (95194)    & \large (110140)        & \large 113584
     \end{tabular}
 
  \end{center}

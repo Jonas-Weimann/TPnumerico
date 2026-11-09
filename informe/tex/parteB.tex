@@ -169,4 +169,68 @@ A su vez, el máximo de la humedad y las precipitaciones se alcanzan ambos con m
 
 \subsection{Maximización de severidad estacional}
 
+Para determinar un escenario de máxima severidad se exploraron combinaciones
+de los parámetros dentro de los intervalos indicados. En particular, se utilizó
+la grilla
+\[
+A\in\{0.25,0.40,0.50,0.60\},\quad
+\beta\in\{0.10,0.20,0.30\},\quad
+\gamma\in\{0.05,0.10,0.15,0.20\},\quad
+\sigma\in\{0.40,0.70,1.00\}.
+\]
+Para cada combinación se verificó que la solución permaneciera acotada y que
+los ciclos anuales finales fueran repetitivos. Como criterio de repetición, se
+compararon los ciclos comprendidos entre los meses 36--48 y 48--60; el caso
+seleccionado presenta una diferencia relativa máxima de $5.48\times10^{-4}$.
+
+La mayor severidad obtenida fue
+\[
+(A,\beta,\gamma,\sigma)=(0.60,0.30,0.05,1.00),
+\qquad S_P=0.9929.
+\]
+Por lo tanto, este escenario cumple simultáneamente con una gran variación
+estacional de la precipitación y con un régimen anual establecido al final de
+la simulación.
+
 \subsection{Comparación de indicadores con parámetros nominales y modificados}
+
+La Tabla \ref{tab:comparacion-maxima} compara los indicadores obtenidos en el
+último ciclo anual. El escenario de máxima severidad casi duplica el valor de
+$S_P$ del caso nominal. A su vez, el desfase entre los máximos de temperatura
+y precipitación se mantiene cercano a un mes.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparación de los indicadores calculados para $48\leq t\leq60$.}
+    \label{tab:comparacion-maxima}
+    \begin{tabular}{lccccc}
+        \hline
+        Escenario & $S_P$ & $\Delta t_{TP}$ [meses] & $P_{\max}$ & $P_{\min}$ & $P_{\mathrm{med}}$ \\
+        \hline
+        Nominal & 0.4293 & 0.82 & 7.3786 & 4.7337 & 6.1609 \\
+        Máxima severidad & 0.9929 & 0.89 & 12.6641 & 4.3246 & 8.3994 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{comparacion_maxima_severidad.png}
+    \caption{Comparación de la temperatura y la precipitación para el caso
+    nominal y el escenario de máxima severidad. La zona sombreada indica el
+    último ciclo anual empleado en los indicadores.}
+    \label{fig:comparacion-maxima}
+\end{figure}
+
+La combinación de máxima severidad no corresponde a tomar todos los
+parámetros en sus valores máximos: el valor elegido para $\gamma$ es el
+mínimo del intervalo. Esto se explica porque $\gamma$ interviene en el
+término $-\gamma HP$, que representa el consumo de humedad asociado a la
+precipitación. Un $\gamma$ mayor reduce la humedad disponible y atenúa la
+realimentación que conduce a la lluvia. En cambio, valores altos de $A$ y
+$\beta$ intensifican, respectivamente, la modulación estacional y la
+producción de humedad a partir de la temperatura. El valor elevado de
+$\sigma$ acelera la disipación $-\sigma P$ y hace más marcado el contraste
+entre los valores máximos y mínimos de $P$. En consecuencia, la severidad
+surge del acoplamiento de los cuatro parámetros y no de maximizar cada uno de
+ellos de forma aislada.
