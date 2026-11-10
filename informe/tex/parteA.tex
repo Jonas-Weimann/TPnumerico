@@ -5,7 +5,7 @@ Se pide resolver lo pedido en la introduccion a traves del metodo de Euler expli
 \begin{itemize}
     \item Las 3 ecuaciones son problemas de valores iniciales de primer orden. Las condiciones iniciales nos brinda una pista y podemos saber que no hay una derivada segunda presente en alguna de las ecuaciones
     
-    \item Dos de las ecuaciones son no lineales y el resto es lineal. Se observa que las no lineales tienen el exponente mayor a 1. Aun asi, debido a que aplicamos Euler explicito, no es un problema que sea no lineal. A diferencia de Euler implicito donde debemos resolver ecuaciones no lineales por iteracion (especificamente para las dos ecuaciones diferenciales no lineales).
+    \item Las 3 ecuaciones son no lineales. Se observa que las no lineales tienen el exponente mayor a 1. Aun asi, debido a que aplicamos Euler explicito, no es un problema que sea no lineal. A diferencia de Euler implicito donde debemos resolver ecuaciones no lineales por iteracion (especificamente para las dos ecuaciones diferenciales no lineales).
     
     \item Todas las ecuaciones dependen de otra.
 
@@ -37,13 +37,20 @@ $P_{0} = 0 \cdot u.p.$
 
 \subsection{Punto A}
 
-Nos pide obtener una solucion "de referencia" usando el metodo de Euler explicito, pero con un $h_{ref}$ lo suficientemente pequeño.
+Nos pide obtener una solucion 'de referencia' usando el metodo de Euler explicito, pero con un $h_{ref}$ lo suficientemente pequeño tal que la diferencia entre dos $h$ consecutivos sea despreciable.
 
-El problema radica que valores de h son lo suficientemente pequeños.
+Para lograr esto, debemos ejecutar el metodo de Euler explicito con un h inicial y luego ir reduciendo a la mitad hasta que la diferencia entre $h_{i}$ y $h_{i+1}$ sea despreciable.
 
-Asumimos comparaciones. El h va a ser unico y es para las 3 ecuaciones diferenciales.
+Debido a que las 3 ecuaciones diferenciales dependen entre si, h va a ser unico. Lo mas seguro es que el valor h para encontrar una diferencia despreciable sea muy pequeño.
 
-Partimos de $h = 1 mes$. Y lo vamos reduciendo a la mitad tal que la diferencia entre los resultados sea despreciable y asi conseguimos un $h_{ref}$. Para eso usaremos el siguiente algoritmo para ejecutar el metodo de Euler explicito con las ecuaciones diferenciales:
+Entonces, partimos de $h = 0.1 \cdot mes$. Y lo vamos reduciendo a la mitad tal que la diferencia entre los resultados sea despreciable y asi conseguimos un $h_{ref}$. 
+
+Para hacer esto, debemos ejecutar el metodo de Euler explicito para cada h, y encima para 3 ecuaciones diferenciales. Por lo cual, diseñamos un algoritmo que calcula todos los valores de T(t), H(t) y P(t).
+
+Se propone que el medio de comparacion para saber si la diferencia es despreciable es evaluar en puntos donde t = 0, 10, 20, 30... hasta llegar a 60. Es decir, cada 10 meses empezando en 0. Esto funciona porque h aunque se divida a la mitad seguirá siendo multiplo de 60 (intervalo de tiempo)
+
+Para eso usaremos el siguiente algoritmo para ejecutar el metodo de Euler explicito con las ecuaciones diferenciales:
+
 
 \begin{lstlisting}[language=Python]
 
@@ -83,7 +90,7 @@ def ejecutar_euler_explicito(h: float):
 
 
 def main():
-    h = 0.00001
+    h = 0.1
     temp, hum, prep = ejecutar_euler_explicito(h)
     print(f"h = {h}")
     #Muchos puntos, averiguamos por cada 10 puntos
@@ -97,7 +104,7 @@ def main():
 
 Con el algoritmo implementado, evaluamos los puntos cuando $t = 0, 10, 20, 30... 60$ y comparamos resultados cuando h se divide a la mitad y encontraremos el $h_{ref}$
 
-La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) cuando h varia y por cada t = 10. Tambien redondeamos en 5 digitos decimales.
+La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) cuando h varia. Sera la diferencia entre valores hs consecutivos cuando alcance 5 digitos significativos.
 
 \begin{table}[h]
     \centering
@@ -124,7 +131,7 @@ La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) c
 \end{table}
 
 
-Lo mismo para H(t) y para P(t)
+La siguiente tabla muestra como se distribuye H(t) (2da ecuacion diferencial) cuando h varia.
 
 \begin{table}[h]
     \centering
@@ -150,6 +157,8 @@ Lo mismo para H(t) y para P(t)
     \caption{Como varia H(t) conforme cambia h por sucesion t = 10}
 \end{table}
 
+La siguiente tabla muestra como se distribuye P(t) (3ra ecuacion diferencial) cuando h varia.
+
 \begin{table}[h]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
@@ -174,11 +183,9 @@ Lo mismo para H(t) y para P(t)
     \caption{Como varia P(t) conforme cambia h por sucesion t = 10}
 \end{table}
 
-Al observar los resultados podemos apreciar que en las últimas columnas de h, el resultado varía de manera casi imperceptible. Podemos asumir que esto se puede despreciar y tendríamos casi 5 digitos significativos.
+Usando nuestro criterio para decidir cuando la diferencia entre pasos h es despreciable, podemos ver en la comparacion entre las dos ultimas columnas de las 3 tablas anteriores.
 
-Se propone que $h_{ref}$ sea igual a 0.00005 ya que la diferencia entre el anterior h y este es tan pequeño que se puede despreciar.
-
-(Asumir que tambien se puede agregar gráficos)
+Se propone que $h_{ref} = 0.00005$ ya que cumple el criterio de al menos 5 digitos significativos.
 
 \subsection{Parte B}
 
@@ -192,7 +199,7 @@ Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser simi
 
 $Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
 
-Buscamos saber como es la diferencia de error entre $h_{ref}$ y los multiplos en aumento de $h = 0.001$. Aunque es tentador mostrar como se alteran los valores segun cada h en comparacion con $h_{ref}$, se va a crear una tabla mostrando como cambia el maximo error absoluto dependiendo del h. Para la comparacion se decidio evaluar los valores de T(t) cuando coinciden en el mismo valor t (tiempo) por cada h.
+Buscamos saber como es la diferencia de error entre $h_{ref}$ y los multiplos en aumento a partir $h = 0.001$. Se decidio usar $h = 0.001$ porque observando en el inciso A, la diferencia entre valores de $h < 0.001$ es muy pequeña y en esos valores no vas a encontrar indicios de aumento de inestabilidad. Aunque es tentador mostrar como se alteran los valores segun cada h en comparacion con $h_{ref}$, se va a crear una tabla mostrando como cambia el maximo error absoluto dependiendo del h. Para la comparacion se decidio evaluar los valores de T(t) cuando coinciden en el mismo valor t (tiempo) para cada h.
 
 Se implementa el siguiente algoritmo para evaluar el error absoluto de la diferencia entre mismos puntos donde coincide t para cada h distinto respecto a ${h_ref}$
 
@@ -278,7 +285,7 @@ if __name__ == "__main__":
     
 \end{lstlisting}
 
-Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto cuando aumenta h comparado con $h_{ref}$
+Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto cuando aumenta h comparado con $h_{ref}$. Eligiendo valores de h tal que se dupliquen, se observa el maximo error absoluto en la siguiente tabla:
 
 \begin{table}[htbp]
     \centering
@@ -286,21 +293,21 @@ Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto 
     \begin{tabular}{|c|c|c|c|}
         \hline 
         $h$ [meses] & Iteraciones & Salto & Max Error Absoluto $T$ [$^\circ$C] \\ \hline
-        0.00100 & 60000 & 20    & $4.333410e^{-4}$ \\ \hline
-        0.00200 & 30000 & 40    & $8.896033e^{-4}$ \\ \hline
-        0.00400 & 15000 & 80    & $1.802479e^{-3}$ \\ \hline
-        0.00800 & 7500  & 160   & $3.629626e^{-3}$ \\ \hline
-        0.01600 & 3750  & 320   & $7.289446e^{-3}$ \\ \hline
-        0.03200 & 1875  & 640   & $1.463162e^{-2}$ \\ \hline
-        0.06400 & 938   & 1280  & $2.940252e^{-2}$ \\ \hline
-        0.12800 & 469   & 2560  & $5.925934e^{-2}$ \\ \hline
-        0.25600 & 234   & 5120  & $1.204173e^{-1}$ \\ \hline
-        0.51200 & 117   & 10240 & $2.461868e^{-1}$ \\ \hline
-        1.02400 & 59    & 20480 & $4.959179e^{-1}$ \\ \hline
+        0.00100 & 60000 & 20    & $4.333410 \times 10^{-4}$ \\ \hline
+        0.00200 & 30000 & 40    & $8.896033 \times 10^{-4}$ \\ \hline
+        0.00400 & 15000 & 80    & $1.802479 \times 10^{-3}$ \\ \hline
+        0.00800 & 7500  & 160   & $3.629626 \times 10^{-3}$ \\ \hline
+        0.01600 & 3750  & 320   & $7.289446 \times 10^{-3}$ \\ \hline
+        0.03200 & 1875  & 640   & $1.463162 \times 10^{-2}$ \\ \hline
+        0.06400 & 938   & 1280  & $2.940252 \times 10^{-2}$ \\ \hline
+        0.12800 & 469   & 2560  & $5.925934 \times 10^{-2}$ \\ \hline
+        0.25600 & 234   & 5120  & $1.204173 \times 10^{-1}$ \\ \hline
+        0.51200 & 117   & 10240 & $2.461868 \times 10^{-1}$ \\ \hline
+        1.02400 & 59    & 20480 & $4.959179 \times 10^{-1}$ \\ \hline
 \end{tabular}
 \end{table}
 
-El comportamiento inestable empieza a rondar alrededor de 1.28 en adelante y mayor a 1.28 muestra valores de error maximo absoluto tendiendo a infinito (El algoritmo no permite calcular para h mayores $h > 1.28$ debido a que presenta valores tan grandes que genera un error debido a que usa todos los bits de la computadora y aun asi no es suficiente)
+Crece el error de discretizacion a partir de $ 0.01 < h < 1.024 $. Mas adelante podemos ver que pasara con $h > 1.024$ y como se comporta el error absoluto. 
 
 Para finalizar el analisis, agregaremos dos graficos, T(t) vs t cuanado h crece y $Err_{abs} = |T_{n}^{h} - T_{n}^{h_{ref}}|$ vs t.
 
@@ -319,7 +326,7 @@ $p = \frac{log(\frac{Err(2h)}{Err(h)})}{log(2)}$
 
 donde $Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
 
-Como ya tenemos todos los hs a mano y calculamos los puntos, podemos usar el orden p para verificar correctamente que el $Err(h)$ escala linealmente. Para lograr esto, tomamos los valores de h en la parte B y aplicamos la formula
+Como ya tenemos todos los h a mano y calculamos los puntos, podemos usar el orden p para verificar correctamente que el $Err(h)$ escala linealmente. Para lograr esto, tomamos los valores de h en la parte B y aplicamos la formula
 
 \begin{table}[htbp]
   \centering
@@ -345,7 +352,7 @@ Como ya tenemos todos los hs a mano y calculamos los puntos, podemos usar el ord
   \vspace{0.5em}
 \end{table}
 
-Se puede apreciar que orden p es aproximadamente 1, sugiriendo que el orden del metodo de Euler explicito es lineal y confirmando empíricamente la teoría. Se aplica la formula sugerida donde 2h es el que corresponde en la fila y h el resultado anterior.
+Se puede apreciar que orden p es aproximadamente 1, sugiriendo que el orden del metodo de Euler explicito es lineal y confirmando empíricamente la teoría. Se aplica la formula sugerida donde 2h es el que corresponde en la fila y h el resultado anterior. Con esto, podemos concluir que el error aumenta linealmente cuando aumenta el valor del paso h ($\mathcal{O}(h)$).
 
 Para completar el analisis se muestra el siguiente grafico en escala logaritmica para evidenciar que efectivamente el orden p es aproximadamente 1:
 
@@ -354,29 +361,38 @@ Para completar el analisis se muestra el siguiente grafico en escala logaritmica
     \includegraphics[width=1\textwidth]{grafico2.png}
 \end{figure}
 
-Observando el grafico, podemos apreciar que la pendiente es lineal comenzando desde 0.001 ($10^{-3}$) hasta llegar 0.1 o mas ($10^{-1}$) concluyendo que efectivamente que a medida que el paso h aumenta, el error absoluto aumenta de forma lineal.
+Observando el grafico, podemos apreciar que la pendiente es lineal comenzando desde 0.001 ($10^{-3}$) hasta llegar 0.1 o mas ($10^{-1}$) concluyendo que efectivamente que a medida que el paso h aumenta, el error absoluto aumenta de forma lineal. Todo esto fue aplicado en escala logaritmica.
 
-\subsection{Parte D}
+\subsection{Parte D: Análisis de Inestabilidad Numérica}
 
-En esta seccion vamos a seguir aumentando el paso temporal h, y averiguaremos cuando el error deja de aumentar en forma lineal y aumenta abruptamente. A partir del paso 1.024 se empiezan a hacer aumentos pequeños, generalemente de 0.05 en 0.05 comenzando desde h = $1.05$ para respetar que sea multiplo $h_{ref}$
+En esta sección se analiza el comportamiento del método de Euler explícito al continuar incrementando el paso temporal $h$ más allá de $1.024$ meses, buscando identificar el umbral en el cual el error deja de crecer en forma aproximadamente proporcional a $h$ y se desencadena una divergencia abrupta \cite[Parte 1.d].
 
-En la siguiente tabla se muestra la siguiente informacion aplicando el algoritmo de la parte B:
+Se evaluaron pasos con incrementos del orden de $0.05$ meses manteniendo la condicion de ser multiplos enteros de $h_{\text{ref}} = 0.00005$ meses. Los resultados obtenidos se sintetizan en la Tabla~\ref{tab:inestabilidad}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Resultados del análisis según el tamaño de paso.}
+    \caption{Comportamiento del error m'aximo absoluto en la region limite de estabilidad.}
+    \label{tab:inestabilidad}
     \begin{tabular}{|c|c|c|c|}
         \hline 
-        $h$ [meses] & Iteraciones & Salto & Max Error Absoluto $T$ [$^\circ$C] \\ \hline
-        1 & 60 & 20000    & $4.945995e^{-1}$ \\ \hline
-        1.05 & 57 & 21000     & $4.936988e^{-1} $ \\ \hline
-        1.1 & 55 & 22000    & $5.424548e^{-1} $ \\ \hline
-        1.15 & 52  & 23000   & $5.813068e^{-1} $ \\ \hline
-        1.2 & 50  & 24000   & $6.065554e^{-1}$ \\ \hline
-        1.25 & 48  & 25000   & $6.152754e^{-1} $ \\ \hline
-        1.28 & 47 & 25600 & $6.036607e^{19}$ \\ \hline
-        1.3 & --   & 2560  & $\infty$ \\ \hline
-\end{tabular}
+        $h$ [meses] & Iteraciones & Salto vs $h_{\text{ref}}$ & Max Error Absoluto $T(t)$ [$^\circ$C] \\ \hline
+        1.00 & 60 & 20000 & $4.945995 \times 10^{-1}$ \\ \hline
+        1.05 & 57 & 21000 & $4.936988 \times 10^{-1}$ \\ \hline
+        1.10 & 55 & 22000 & $5.424548 \times 10^{-1}$ \\ \hline
+        1.15 & 52 & 23000 & $5.813068 \times 10^{-1}$ \\ \hline
+        1.20 & 50 & 24000 & $6.065554 \times 10^{-1}$ \\ \hline
+        1.25 & 48 & 25000 & $6.152754 \times 10^{-1}$ \\ \hline
+        1.28 & 47 & 25600 & $6.036607 \times 10^{19}$ \\ \hline
+        1.30 & 46 & 26000 & $\infty$ (\texttt{OverflowError}) \\ \hline
+    \end{tabular}
 \end{table}
 
-Con los valores mostrados, podemos intuir que a partir de $h = 1$ comienza a tener comportamientos mas inestables hasta alcanzar 1.25, donde la computadora comienza a devolver el error OverflowError: (34, 'Numerical result out of range'). Esto indica que el valor maximo del error es tan grande que no puede calcularse, incluso con 64 bits. Esto se aprecia mas en 1.28, valor donde se encontro mostrando un resultado completamente inestable mostrando un error absoluto catastroficamente grande y sin sentido comparado con $h_{ref}$ en el punto A. Podemos decir que la inestabilidad de h se encuentra entre 1.22 en adelante mostrando resultados completamente inestables. El error absoluto crece exponencialmente para valores $h > 1.22$.
+\paragraph{Discusión entre Error de Discretización e Inestabilidad Numérica:}
+A partir de los resultados observados, es posible establecer una clara distinción conceptual entre ambos fenómenos:
+
+\begin{itemize}
+    \item \textbf{Error de discretización (o de truncamiento):} Predomina en el rango $h \le 1.25$. Es inherente a la aproximación de las derivadas continuas mediante diferencias finitas. Se caracteriza por un crecimiento acotado y suave del error, proporcional a $\mathcal{O}(h)$. Si bien la precisión disminuye progresivamente al engrosar el paso, la solución numérica conserva el perfil cualitativo oscilatorio real del sistema dinámico.
+    
+    \item \textbf{Inestabilidad numerica:} Ocurre al superar el valor critico $h \approx 1.25$ meses. No se debe al truncamiento de la serie de Taylor, sino a la amplificacion no acotada de las perturbaciones numericas de un paso temporal al siguiente (localmente cuando el factor de amplificacion $|1 + h\lambda_i| > 1$, donde $\lambda_i$ representa un autovalor del Jacobiano del sistema). En este regimen, se destruye la fisica del problema, produciendo oscilaciones que crecen exponencialmente hasta saturar los registros numericos de 64 bits ($10^{19}$ y posterior \texttt{OverflowError} / \textsf{NaN}).
+\end{itemize}
+
