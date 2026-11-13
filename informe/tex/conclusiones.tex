@@ -13,3 +13,21 @@ $(A,\beta,\gamma,\sigma)=(0.60,0.30,0.05,1.00)$ produjo la máxima severidad
 explorada, $S_P=0.9929$, manteniendo un régimen anual repetitivo. En
 particular, que $\gamma$ tome su valor mínimo confirma que maximizar todos los
 parámetros no conduce necesariamente al máximo contraste estacional.
+
+\subsection{Anexo}
+
+Se muestra a continuación los prompts utilizados para consultar a la IA sobre ciertas cuestiones del informe:
+
+\begin{itemize}
+    \item Consulta: Genera un algoritmo que permita calcular para cada valor h que sea multiplo de href la maxima diferencia absoluta entre dos puntos que coinciden en el mismo valor t.
+    \item Resultado: Se ha generado un algoritmo que calcula la maxima diferencia (mostrada en el inciso B), el unico cambio fue en el main ya que el algoritmo del inciso A fue creado personalmente por nosotros. Por lo cual solo hizo pequeñas modificaciones
+    \item Consulta: No quiero pecar de poner demasiado contenido pero se deberia mostrar algunos puntos de t donde se muestre los valores T(t) para saber la diferencia abrupta cuando h aumenta. Si es asi, como podemos hacerlo tal que en el informe no ocupe 10 hojas en tablas comparando diferentes hs con href. 
+    \item Resultado: La IA nos sugirio una tabla resumen de maximo error absoluto para el inciso A y B, ademas de agregarle graficos para mostrar como se comporta para distintos valores de paso h.
+    \item Genera un grafico T(t) vs t y maximo error absoluto vs t para distintos valores de h, se brinda el algoritmo correspondiente para obtener los puntos y como compararlos para distintos pasos h (Grafico Inciso B).
+    \item Resultado: Se generaron graficos con muchos valores de h, y estos eran muy pocos visibles y los colores no ayudaban, se tuvo que corregir constantemente y aun asi no funciono. La solucion fue elegir ciertos pasos h que muestren una diferencia que se pueda apreciar en el grafico.
+    \item Consulta: Con la tabla de errores maximos obtenidos, se debe aplicar la siguiente formula para p (Inciso C), generar una tabla que con los valores de la tabla proporcionados, se genere otra tabla para obtener el orden de precision p.
+    \item Resultado: Se genero una tabla con los valores de p, y algunas columnas innecesarias (mostraba $Err(2h) / Err(h)$). Se elimino la tabla innecesarias, tambien se evaluo si el calculo del orden p era correcto. Se determino que es correcto.
+    \item Consulta: quiero calcular para todos los h presentes en la tabla del inciso A para T(t), H(t) y P(t) en los puntos de encuentro de dos h consecutivos.
+    \item Resultado: Se brinda un algoritmo modificado que brinda la maxima diferencia absoluta entre dos puntos que coinciden en el mismo valor t, con el fin de verificar que efectivamente cumple al menos 5 digitos significativos.
+
+\end{itemize}
