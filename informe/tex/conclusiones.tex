@@ -1,5 +1,11 @@
 \section{Conclusiones}
 
+En la Parte 1 se implementó el método de Euler explícito para integrar el sistema no lineal acoplado conformado por $T(t)$, $H(t)$ y $P(t)$ mediante un único paso temporal $h$ común. Dado que este esquema numérico calcula el estado siguiente exclusivamente a partir de los valores conocidos en el instante anterior ($t_n$), se demostró que no resulta necesario utilizar pasos de integración independientes para cada ecuación diferencial. A partir del refinamiento sucesivo del paso $h$ y la evaluación en puntos temporales coincidentes, se determinó un paso de referencia $h_{\text{ref}}$ que asegura una convergencia de al menos cinco dígitos significativos.
+
+Asimismo, se cuantificó la máxima diferencia absoluta respecto de la solución de referencia al variar el tamaño del paso $h$. Los resultados evidenciaron que la disminución de $h$ reduce el error de manera proporcional, confirmando experimentalmente el orden de convergencia global lineal ($\mathcal{O}(h)$) previsto por la teoría del truncamiento mediante series de Taylor.
+
+Finalmente, el estudio permitió distinguir conceptual y experimentalmente entre el régimen dominado por el error de discretización donde la desviación respecto de la solución exacta permanece acotada y preserva la dinámica del modelo--- y el régimen de inestabilidad numérica. Se comprobó que, al superar un umbral crítico de paso temporal, las perturbaciones se amplifican exponencialmente hasta provocar la divergencia de la solución y el desbordamiento aritmético del algoritmo. En consecuencia, queda demostrada la importancia de seleccionar un tamaño de paso adecuado que garantice simultáneamente la estabilidad y la precisión de los resultados numéricos.
+
 El método de Euler permitió caracterizar el comportamiento transitorio y el
 régimen estacional del modelo. Para el caso nominal, la precipitación presenta
 una severidad estacional de aproximadamente $0.43$ y su máximo ocurre con un
