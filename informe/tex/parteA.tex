@@ -5,7 +5,7 @@ Se pide resolver lo pedido en la introduccion a traves del metodo de Euler expli
 \begin{itemize}
     \item Las 3 ecuaciones son problemas de valores iniciales de primer orden. Las condiciones iniciales nos brinda una pista y podemos saber que no hay una derivada segunda presente en alguna de las ecuaciones
     
-    \item Las 3 ecuaciones son no lineales. Se observa que las no lineales tienen el exponente mayor a 1. Aun asi, debido a que aplicamos Euler explicito, no es un problema que sea no lineal. A diferencia de Euler implicito donde debemos resolver ecuaciones no lineales por iteracion (especificamente para las dos ecuaciones diferenciales no lineales).
+    \item Las 3 ecuaciones son no lineales. Se observa que las no lineales tienen el exponente mayor a 1. Aun asi, debido a que aplicamos Euler explicito, no es un problema que sea no lineal. A diferencia de Euler implicito donde debemos resolver ecuaciones no lineales por iteracion.
     
     \item Todas las ecuaciones dependen de otra.
 
@@ -47,7 +47,7 @@ Entonces, partimos de $h = 0.1 \cdot mes$. Y lo vamos reduciendo a la mitad tal 
 
 Para hacer esto, debemos ejecutar el metodo de Euler explicito para cada h, y encima para 3 ecuaciones diferenciales. Por lo cual, diseñamos un algoritmo que calcula todos los valores de T(t), H(t) y P(t).
 
-Se propone que el medio de comparacion para saber si la diferencia es despreciable es evaluar en puntos donde t = 0, 10, 20, 30... hasta llegar a 60. Es decir, cada 10 meses empezando en 0. Esto funciona porque h aunque se divida a la mitad seguirá siendo multiplo de 60 (intervalo de tiempo)
+Se propone que el medio de comparacion para saber si la diferencia es despreciable es evaluar en puntos donde $t \in [0, 10, 20, 30, 40, 50, 60]$. Es decir, cada 10 meses empezando en 0. Esto funciona porque h aunque se divida a la mitad seguirá siendo multiplo de 60 (intervalo de tiempo)
 
 Para eso usaremos el siguiente algoritmo para ejecutar el metodo de Euler explicito con las ecuaciones diferenciales:
 
@@ -102,11 +102,13 @@ def main():
     
 \end{lstlisting}
 
-Con el algoritmo implementado, evaluamos los puntos cuando $t = 0, 10, 20, 30... 60$ y comparamos resultados cuando h se divide a la mitad y encontraremos el $h_{ref}$
+Con el algoritmo implementado, evaluamos los puntos cuando $t \in [0, 10, 20, 30, 40, 50, 60]$ y comparamos resultados cuando h se divide a la mitad y encontraremos el $h_{ref}$
+
+Tomando el output obtenido del algoritmo, lo escribiremos en una tabla para una presentacion mas formal.
 
 La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) cuando h varia. Sera la diferencia entre valores hs consecutivos cuando alcance 5 digitos significativos.
 
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -131,9 +133,7 @@ La siguiente tabla muestra como se distribuye T(t) (1era ecuacion diferencial) c
 \end{table}
 
 
-La siguiente tabla muestra como se distribuye H(t) (2da ecuacion diferencial) cuando h varia.
-
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -157,9 +157,7 @@ La siguiente tabla muestra como se distribuye H(t) (2da ecuacion diferencial) cu
     \caption{Como varia H(t) conforme cambia h por sucesion t = 10}
 \end{table}
 
-La siguiente tabla muestra como se distribuye P(t) (3ra ecuacion diferencial) cuando h varia.
-
-\begin{table}[h]
+\begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
@@ -183,19 +181,121 @@ La siguiente tabla muestra como se distribuye P(t) (3ra ecuacion diferencial) cu
     \caption{Como varia P(t) conforme cambia h por sucesion t = 10}
 \end{table}
 
+
 Usando nuestro criterio para decidir cuando la diferencia entre pasos h es despreciable, podemos ver en la comparacion entre las dos ultimas columnas de las 3 tablas anteriores.
 
 Se propone que $h_{ref} = 0.00005$ ya que cumple el criterio de al menos 5 digitos significativos.
+
+Tambien, como verificacion extra, decidimos ejecutar el algoritmo pero no para $t \in [0,10,20,30,40,50,60]$, sino para todos los valores en donde $h$ consecutivos se puedan evaluar para cada instante $t$ que coincidan
+
+Para eso, se hace una pequeña modificacion al algoritmo anterior:
+
+\begin{lstlisting}[language=Python]
+    import math
+
+    def ejecutar_euler_explicito(h: float):
+        t_max, roce, alpha, beta = 4.0, 0.3, 0.05, 0.20
+        gamma, delta, sigma, a_mayus = 0.1, 0.4, 0.7, 0.45
+        omega = 2 * math.pi / 12
+
+        t_inicial, h_incial, p_inicial = 1.0, 0.0, 0.0
+        iteraciones = round(60 / h)
+
+        temperaturas = [t_inicial]
+        humedades = [h_incial]
+        precipitaciones = [p_inicial]
+
+        for i in range(1, iteraciones + 1):
+            t = (i - 1) * h
+            r = roce + a_mayus * math.cos(omega * t - math.pi)
+
+            t_nuevo = t_inicial + h * (r * t_inicial * (1 - t_inicial / t_max) - alpha * h_incial)
+            h_nuevo = h_incial + h * (beta * (t_inicial ** 2) - gamma * p_inicial * h_incial)
+            p_nuevo = p_inicial + h * (delta * (h_incial ** 2) - sigma * p_inicial)
+
+            t_inicial, h_incial, p_inicial = t_nuevo, h_nuevo, p_nuevo
+
+            temperaturas.append(t_inicial)
+            humedades.append(h_incial)
+            precipitaciones.append(p_inicial)
+
+        return (temperaturas, humedades, precipitaciones)
+
+
+    def comparar_pasos_consecutivos_inciso_a():
+        pasos_h = [0.1, 0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005]
+
+        print(f"{'h_actual':<10} | {'h_siguiente':<12} | {'Factor':<8} | {'Max Diff T [Celsius]':<18} | {'Max Diff H [u.h.]':<18} | {'Max Diff P [u.p.]':<18}")
+        print("-" * 90)
+
+        #Obtenemos la solucion del primer paso (h = 0.1)
+        T_act, H_act, P_act = ejecutar_euler_explicito(pasos_h[0])
+
+        for k in range(len(pasos_h) - 1):
+            h_act = pasos_h[k]
+            h_sig = pasos_h[k + 1]
+            
+            factor = round(h_act / h_sig)
+
+            #Calculamos la solucion con el paso mas fino h_siguiente
+            T_sig, H_sig, P_sig = ejecutar_euler_explicito(h_sig)
+
+            # Maxima diferencia absoluta evaluada sobre TODOS los puntos del paso grueso
+            diff_T = max(abs(T_act[i] - T_sig[i * factor]) for i in range(len(T_act)))
+            diff_H = max(abs(H_act[i] - H_sig[i * factor]) for i in range(len(H_act)))
+            diff_P = max(abs(P_act[i] - P_sig[i * factor]) for i in range(len(P_act)))
+
+            print(f"{h_act:<10.5f} | {h_sig:<12.5f} | {factor:<8d} | {diff_T:<18.6e} | {diff_H:<18.6e} | {diff_P:<18.6e}")
+
+            #Avanzamos la solucion para la siguiente comparacion
+            T_act, H_act, P_act = T_sig, H_sig, P_sig
+
+    if __name__ == "__main__":
+        comparar_pasos_consecutivos_inciso_a()
+\end{lstlisting}
+
+Este algoritmo nos permite comparar la maxima diferencia entre distintos pasos h consecutivos donde siempre se evalua en los puntos t que puedan coincidir. Esto nos permite averiguar la maxima diferencia sin tener que poner una condicion como $t \in [0,10,20,30,40,50,60]$.
+
+El resultado de aplicar este algoritmo se presenta en la siguiente tabla para que se pueda apreciar de manera mas clara:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        $h_{\text{actual}}$ & $h_{\text{sig}}$ & Factor &
+        Max Diff T [$^\circ$C] & Max Diff H [u.h.] & Max Diff P [u.p.] \\
+        \hline
+        0.10000 & 0.01000 & 10 & $4.161984 \times 10^{-2}$ & $9.288500 \times 10^{-2}$ & $2.223759\times 10^{-1}$ \\
+        0.01000 & 0.00500 & 2  & $2.284820 \times 10^{-3}$ & $5.045308 \times 10^{-3}$ & $1.187316 \times 10^{-2}$ \\
+        0.00500 & 0.00100 & 5  & $1.825750 \times 10^{-3}$ & $4.027330 \times 10^{-3}$ & $9.462212 \times 10^{-3}$ \\
+        0.00100 & 0.00050 & 2  & $2.280874 \times 10^{-4}$ & $5.028615 \times 10^{-4}$ & $1.180518 \times 10^{-3}$ \\
+        0.00050 & 0.00010 & 5  & $1.824488 \times 10^{-4}$ & $4.022004 \times 10^{-4}$ & $9.440532 \times 10^{-4}$ \\
+        0.00010 & 0.00005 & 2  & $2.280479 \times 10^{-5}$ & $5.026951 \times 10^{-5}$ & $1.179841 \times 10^{-4}$ \\
+        \hline
+    \end{tabular}
+    \caption{Diferencias máximas entre pasos consecutivos}
+    \label{tab:diferencias_pasos}
+\end{table}
+
+Con lo observado, podemos decir lo siguiente para $h = 0.00005$:
+
+\begin{itemize}
+    \item Para la diferencia maxima con el anterior paso h para T(t), se cumple el criterio de 5 digitos significativos.
+    \item Para la diferencia maxima con el anterior paso h para H(t), se cumple el criterio de 5 digitos significativos.
+    \item Para la diferencia maxima con el anterior paso h para P(t), se cumple el criterio de 5 digitos significativos.   
+\end{itemize}
+
+Con esto en mente, podemos deducir que un $h = 0.00005$ es un buen candidatos para ser ser $h_{ref}$.
 
 \subsection{Parte B}
 
 En este inciso b, se pide:
 
-Resuelver nuevamente el problema utilizando una sucesión de pasos h tales que cada valor sea 
+Resolver nuevamente el problema utilizando una sucesión de pasos h tales que cada valor sea 
 aproximadamente el doble del anterior. Debemos comparar con la solucion de referencia y cuantificar el error usando el máximo error absoluto sobre todo el intervalo de la variable 
 T(t). 
 
-Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser similares y con margenes de errores pequeños a partir de $h = 0.001$. Por lo cual este sera nuestro punto de inicio donde duplicamos el valor de h para observar el comportamiento de los valores y se nos pide usando el maximo error absoluto sobre el intervalo de la variable $T(t)$:
+Con lo hecho en el inciso A podemos asegurar que los valores empiezan a ser similares y con margenes de errores pequeños a partir de $h = 0.001$. Por lo cual, este sera nuestro punto de inicio donde duplicamos el valor de h para observar el comportamiento de los valores y se nos pide usando el maximo error absoluto sobre el intervalo de la variable $T(t)$:
 
 $Err(h) = max_{n} |T_{n}^{h} - T_{n}^{h_{ref}}|$
 
@@ -309,7 +409,7 @@ Ejecutamos el algoritmo implementado y observamos como cambia el error absoluto 
 
 Crece el error de discretizacion a partir de $ 0.01 < h < 1.024 $. Mas adelante podemos ver que pasara con $h > 1.024$ y como se comporta el error absoluto. 
 
-Para finalizar el analisis, agregaremos dos graficos, T(t) vs t cuanado h crece y $Err_{abs} = |T_{n}^{h} - T_{n}^{h_{ref}}|$ vs t.
+Para finalizar el analisis, agregaremos dos graficos, T(t) vs t cuanado h crece y cuando $Err_{abs} = |T_{n}^{h} - T_{n}^{h_{ref}}|$ vs t.
 
 \begin{figure}[H]
     \centering
@@ -365,7 +465,7 @@ Observando el grafico, podemos apreciar que la pendiente es lineal comenzando de
 
 \subsection{Parte D: Análisis de Inestabilidad Numérica}
 
-En esta sección se analiza el comportamiento del método de Euler explícito al continuar incrementando el paso temporal $h$ más allá de $1.024$ meses, buscando identificar el umbral en el cual el error deja de crecer en forma aproximadamente proporcional a $h$ y se desencadena una divergencia abrupta \cite[Parte 1.d].
+En esta sección se analiza el comportamiento del método de Euler explícito al continuar incrementando el paso temporal $h$ más allá de $1.024$ meses, buscando identificar el umbral en el cual el error deja de crecer en forma aproximadamente proporcional a $h$ y se desencadena una divergencia abrupta.
 
 Se evaluaron pasos con incrementos del orden de $0.05$ meses manteniendo la condicion de ser multiplos enteros de $h_{\text{ref}} = 0.00005$ meses. Los resultados obtenidos se sintetizan en la Tabla~\ref{tab:inestabilidad}.
 
@@ -393,6 +493,5 @@ A partir de los resultados observados, es posible establecer una clara distinci�
 \begin{itemize}
     \item \textbf{Error de discretización (o de truncamiento):} Predomina en el rango $h \le 1.25$. Es inherente a la aproximación de las derivadas continuas mediante diferencias finitas. Se caracteriza por un crecimiento acotado y suave del error, proporcional a $\mathcal{O}(h)$. Si bien la precisión disminuye progresivamente al engrosar el paso, la solución numérica conserva el perfil cualitativo oscilatorio real del sistema dinámico.
     
-    \item \textbf{Inestabilidad numerica:} Ocurre al superar el valor critico $h \approx 1.25$ meses. No se debe al truncamiento de la serie de Taylor, sino a la amplificacion no acotada de las perturbaciones numericas de un paso temporal al siguiente (localmente cuando el factor de amplificacion $|1 + h\lambda_i| > 1$, donde $\lambda_i$ representa un autovalor del Jacobiano del sistema). En este regimen, se destruye la fisica del problema, produciendo oscilaciones que crecen exponencialmente hasta saturar los registros numericos de 64 bits ($10^{19}$ y posterior \texttt{OverflowError} / \textsf{NaN}).
+    \item \textbf{Inestabilidad numerica:} Ocurre al superar el valor critico $h \approx 1.25$ meses. No se debe al truncamiento de la serie de Taylor, sino a la amplificacion no acotada de las perturbaciones numericas de un paso temporal al siguiente. En este regimen, se destruye la fisica del problema, produciendo oscilaciones que crecen exponencialmente hasta saturar los registros numericos de 64 bits ($10^{19}$ y posterior \texttt{OverflowError} / \textsf{NaN}).
 \end{itemize}
-
