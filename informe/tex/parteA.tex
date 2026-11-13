@@ -262,7 +262,7 @@ El resultado de aplicar este algoritmo se presenta en la siguiente tabla para qu
     \centering
     \begin{tabular}{|c|c|c|c|c|c|}
         \hline
-        $h_{\text{actual}}$ & $h_{\text{sig}}$ & Factor &
+        $h_{\text{actual}}$ & $h_{\text{sig}}$ & Salto &
         Max Diff T [$^\circ$C] & Max Diff H [u.h.] & Max Diff P [u.p.] \\
         \hline
         0.10000 & 0.01000 & 10 & $4.161984 \times 10^{-2}$ & $9.288500 \times 10^{-2}$ & $2.223759\times 10^{-1}$ \\
@@ -277,6 +277,8 @@ El resultado de aplicar este algoritmo se presenta en la siguiente tabla para qu
     \label{tab:diferencias_pasos}
 \end{table}
 
+'Salto' en la tabla se refiere a cada cuantas iteraciones, $h_{sig}$ se puede evaluar en un punto t donde coincide con $h_{actual}$. Por ejemplo, cuando $h_{actual} = 0.1$ y $h_{sig} = 0.01$, el salto es de 10, porque cada 10 iteraciones de $h_{sig}$ coincide con una iteracion de $h_{actual}$.
+
 Con lo observado, podemos decir lo siguiente para $h = 0.00005$:
 
 \begin{itemize}
@@ -285,7 +287,7 @@ Con lo observado, podemos decir lo siguiente para $h = 0.00005$:
     \item Para la diferencia maxima con el anterior paso h para P(t), se cumple el criterio de 5 digitos significativos.   
 \end{itemize}
 
-Con esto en mente, podemos deducir que un $h = 0.00005$ es un buen candidatos para ser ser $h_{ref}$.
+Con esto en mente, podemos deducir que un $h = 0.00005$ es un buen candidatos para ser $h_{ref}$.
 
 \subsection{Parte B}
 
@@ -491,7 +493,7 @@ Se evaluaron pasos con incrementos del orden de $0.05$ meses manteniendo la cond
 A partir de los resultados observados, es posible establecer una clara distinción conceptual entre ambos fenómenos:
 
 \begin{itemize}
-    \item \textbf{Error de discretización (o de truncamiento):} Predomina en el rango $h \le 1.25$. Es inherente a la aproximación de las derivadas continuas mediante diferencias finitas. Se caracteriza por un crecimiento acotado y suave del error, proporcional a $\mathcal{O}(h)$. Si bien la precisión disminuye progresivamente al engrosar el paso, la solución numérica conserva el perfil cualitativo oscilatorio real del sistema dinámico.
+    \item \textbf{Error de discretización (o de truncamiento):} Predomina en el rango $h \le 1.25$. Es inherente a la aproximación de las derivadas continuas mediante diferencias finitas. Se caracteriza por un crecimiento acotado y suave del error, proporcional a $\mathcal{O}(h)$. Si bien la precisión disminuye progresivamente al engrosar el paso, la solución numérica conserva el perfil oscilatorio real del sistema fisico.
     
     \item \textbf{Inestabilidad numerica:} Ocurre al superar el valor critico $h \approx 1.25$ meses. No se debe al truncamiento de la serie de Taylor, sino a la amplificacion no acotada de las perturbaciones numericas de un paso temporal al siguiente. En este regimen, se destruye la fisica del problema, produciendo oscilaciones que crecen exponencialmente hasta saturar los registros numericos de 64 bits ($10^{19}$ y posterior \texttt{OverflowError} / \textsf{NaN}).
 \end{itemize}
